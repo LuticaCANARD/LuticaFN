@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 using System.Data.SqlClient;
 using Newtonsoft.Json.Linq;
 using MySql.Data.MySqlClient;
-
+using LuticaFN.inc;
 
 
 namespace LuticaFN
@@ -139,8 +139,45 @@ namespace LuticaFN
                         ret.Add("html", sqlDataReader["post_html"].ToString());
                     }
                 }
+                con.Close();
             }
-            return new OkObjectResult(ret);
+            JArray aka = new JArray(ret);
+            return new OkObjectResult(aka);
+        }
+    }
+    public class writePost
+    {
+
+        private readonly ILogger<getPosts> _logger;
+        [FunctionName("writePost")]
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger _logger)
+        {
+            int ret = 0;
+
+            var postim2 = await req.ReadFormAsync();
+            int code = int.Parse(postim2["code"]);
+            Luticapost code2 = new LuticaFN.inc.Luticapost();
+            if (code != code2.code) 
+            {
+                return new OkObjectResult(-1);
+            }
+            string title = postim2["title"];
+            string text = postim2["text"];
+            string sql = SQLstring.sqlinside;
+            using (MySqlConnection conn = new MySqlConnection(sql)) 
+            {
+            conn.Open();
+            string cmd = "INSERT INTO tb_posts (post_name,post_html) VALUES (@title,@post)";
+                using (MySqlCommand command = new MySqlCommand(cmd, conn)) 
+                {
+                    command.CommandText = cmd;
+                    command.Parameters.AddWithValue("title", title);
+                    command.Parameters.AddWithValue("post", text);
+                    command.ExecuteNonQuery();
+                }
+            conn.Close();
+            }
+            return new RedirectResult("https://luticafield.azurewebsites.net/blog", true);
         }
     }
 }
