@@ -180,5 +180,53 @@ namespace LuticaFN
             return new RedirectResult("https://luticafield.azurewebsites.net/blog", true);
         }
     }
+    public class makeSQLBuilding
+    {
+        private readonly ILogger<getPosts> _logger;
+        [FunctionName("makeSQLBuilding")]
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger _logger)
+        {
+            var postim2 = await req.ReadFormAsync();
+            /*{ "construction",int_construction_type.ToString() },
+			{"open",int_opened_type.ToString()},
+			{"product",int_production_type.ToString()},
+			{"arm",int_armed_type.ToString()},
+			{"handicap",int_handicap_type.ToString()},
+			{"code",code_encrypto}*/
+            if (postim2["code"] != LuticaFN.inc.Luticapost.key) 
+            {
+                return new OkObjectResult(-1);
+            }
+            string name= postim2["name"];
+            int construction = int.Parse(postim2["construction"]);
+            int open = int.Parse(postim2["open"]);
+            int product = int.Parse(postim2["product"]);
+            int arm = int.Parse(postim2["arm"]);
+            int handicap = int.Parse(postim2["handicap"]);
+            int income = int.Parse(postim2["income"]);
+            string sql = SQLstring.sqlinside;
+            using (MySqlConnection conn = new MySqlConnection(sql))
+            {
+                conn.Open();
+                string cmd = "INSERT INTO tb_battleground (name,construction_type,armer_type,opened,production_type,movement_handicap,income) VALUES (@name,@construction,@arm,@open,@product,@handicap,@income)";
+                using (MySqlCommand command = new MySqlCommand(cmd, conn))
+                {
+                    command.CommandText = cmd;
+                    command.Parameters.AddWithValue("name", name);
+                    command.Parameters.AddWithValue("construction", construction);
+                    command.Parameters.AddWithValue("arm", arm);
+                    command.Parameters.AddWithValue("open", open);
+                    command.Parameters.AddWithValue("product", product);
+                    command.Parameters.AddWithValue("income", income);
+                    command.Parameters.AddWithValue("handicap", handicap);
+                    command.ExecuteNonQuery();
+                }
+                conn.Close();
+            }
+            
+            return new OkObjectResult(1);
+
+        }
+    }
 }
 
