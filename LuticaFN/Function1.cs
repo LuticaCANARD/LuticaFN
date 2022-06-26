@@ -186,6 +186,7 @@ namespace LuticaFN
         [FunctionName("makeSQLBuilding")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger _logger)
         {
+
             var postim2 = await req.ReadFormAsync();
             /*{ "construction",int_construction_type.ToString() },
 			{"open",int_opened_type.ToString()},
@@ -228,5 +229,15 @@ namespace LuticaFN
 
         }
     }
+    public class procBattle 
+    {
+        private readonly ILogger<getPosts> _logger;
+        [FunctionName("procBattle")]
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger _logger)
+        {
+
+            return new OkObjectResult(accessToken);
+        }
+     }
 }
 
