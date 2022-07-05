@@ -239,5 +239,18 @@ namespace LuticaFN
             return new OkObjectResult(accessToken);
         }
      }
+
+   public class deletePost 
+    {
+        private readonly ILogger<getPosts> _logger;
+        [FunctionName("deletePost")]
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger _logger) 
+        {
+            var res = await req.ReadFormAsync();
+            if (req == null || res["code"] != LuticaFN.inc.Luticapost.key) return new OkObjectResult(-1);
+            
+            return new OkObjectResult(1);
+        }
+    }
 }
 
