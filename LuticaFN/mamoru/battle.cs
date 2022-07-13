@@ -33,29 +33,67 @@ namespace LuticaFN
         {
             if (shield <= damege) { hp -= damege - shield; };
         }
+        public int[] getSpecial() 
+        {
+            return special;
+        }
+        public void buffbp(int many)
+        { bp += many; }
 
-        
     }
     class Location 
     {
-    
+        protected string name;
+        protected int code;
     }
     class Battle 
     {
-        protected List<unit> attack;
-        protected List<unit> defense;
         protected List<unit> attacker;
         protected List<unit> defenseer;
-        protected 
-        public void asemble(int code)
+        protected Location location;
+        public async void asemble(bool defence) 
+        {
+            List<unit> units = attacker;
+            if (defence) 
+            {
+                units = defenseer;
+            }
+            foreach(unit a in units) 
+            {
+                List<Task> tasks = new List<Task>();
+                foreach (int code in a.getSpecial()) 
+                {
+                    tasks.Add(asemble_task(a,code, defence));
+                }
+                await Task.WhenAll(tasks);
+            }
+        }
+        public async Task asemble_task(unit unit_,int code,bool defence)
         {
             switch (code)
             {
-                case 0: action0(); break;
+                case 0: action0(defence); break;
+                case 1: action1(unit_,defence); break;
                 default: break;
+            };
+        }
+        public void action0(bool defence)
+        {
+            List<unit> counter = attacker;
+            if (defence) { counter = defenseer; }
+            foreach(unit unit_ in counter) 
+            {
+                if (unit_.getSpecial().Contains(2)) 
+                {
+                    unit_.gotDamege(100);
+                }
             }
         }
-        public void action0()
+        public void action1(bool defence) 
+        {
+           
+        }
+        public void asmbleLocation(int code)
         {
 
 

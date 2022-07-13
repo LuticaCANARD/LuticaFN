@@ -229,7 +229,7 @@ namespace LuticaFN
 
         }
     }
-    public class procBattle 
+    /*public class procBattle 
     {
         private readonly ILogger<getPosts> _logger;
         [FunctionName("procBattle")]
@@ -238,7 +238,7 @@ namespace LuticaFN
 
             return new OkObjectResult(accessToken);
         }
-     }
+     }*/
 
    public class deletePost 
     {
@@ -248,8 +248,17 @@ namespace LuticaFN
         {
             var res = await req.ReadFormAsync();
             if (req == null || res["code"] != LuticaFN.inc.Luticapost.key) return new OkObjectResult(-1);
-            
-            return new OkObjectResult(1);
+            using (MySqlConnection conn = new MySqlConnection(SQLstring.sqlinside)) 
+            {
+                conn.Open();
+                string cmd = "DELECT ";
+                using(MySqlCommand cmds = new MySqlCommand(cmd, conn)) 
+                {
+                    
+                }
+            }
+
+                return new OkObjectResult(1);
         }
     }
 }
